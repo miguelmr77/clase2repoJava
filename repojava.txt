@@ -2,4 +2,8 @@ alksdjflkñajlxckvjlkajsdklfjalskdf
 asdklfjalskñdjflñasjldkñfjalksdjf
 asdfkljasñldjflkñasjdlfkcjzaklxcñjv
 modificacion remota1
+<<<<<<< HEAD
 modificacion local
+=======
+modificacion remota2
+>>>>>>> 50e1571abd333acc510675eec79228a65cb677ac
