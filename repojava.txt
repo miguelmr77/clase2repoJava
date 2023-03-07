@@ -7,3 +7,48 @@ modificacion local
 =======
 modificacion remota2
 >>>>>>> 50e1571abd333acc510675eec79228a65cb677ac
+
+9)Diferentes acercamientos
+Cuando tienes cambios locales uncommitted y aun así deseas obtener una nueva versión desde el repositorio remoto, el caso de uso generalmente cae en uno de los siguientes escenarios.
+
+No importan los cambios locales y desea sobrescribirlos,
+Te importan los cambios y te gustaría mantenerlos después de traer los cambios remotos,
+Deseas descargar los cambios remotos pero aún no aplicarlos.
+Cada uno de estos enfoques requiere una solución diferente.
+
+No quieres mantener los cambios locales
+En este caso, deseas eliminar todos los cambios locales uncommitted. Quizás modificaste un archivo para probar, pero ya no necesitas la modificación. Lo único que importa es estar al día con los cambios.
+
+Esto significa que agrega un paso más entre buscar los cambios remotos y mezclarlos en local. Este paso restablecerá el branch a su último estado committed, lo que permitirá que git merge funcione.
+
+git fetch
+git reset --hard HEAD
+git merge origin/$CURRENT_BRANCH
+Si no quieres escribir el nombre del branch todo el tiempo puedes correr este comando. Git tiene un atajo que apunta al upstream branch @{u}. upstream branch es el branch en repositorio remoto al que se le hace git pull o git push.
+
+Así es como se vería el comando anterior usando el atajo.
+
+git fetch
+git reset --hard HEAD
+git merge '@{u}'
+Estamos citando el atajo en el ejemplo para evitar que el shell lo interprete.
+
+Te importan los cambios locales
+Cuando tus cambios uncommitted son importantes, hay dos opciones. Tú puedes hacer un commit y luego realizar git pull, o puedes guardarlos temporalmente con git stash.
+
+git stash significa guardar los cambios por un momento para traerlos nuevamente más tarde. Para ser más preciso, git stash crea un commit que no es visible en el branch actual, pero que son accesibles para Git.
+
+Para recuperar los cambios guardados en el último stash, se debe usar el comando git stash pop. Después de aplicar con éxito los cambios este comando también elimina el stash commit, ya que no es necesario mantenerlo.
+
+El flujo de trabajo podría verse así:
+
+git fetch
+git stash
+git merge '@{u}'
+git stash pop
+Por defecto, los cambios en stash se convertiran en staged. Si deseas eliminarlos usa el comando git restore --staged (si usas una versión mayor de Git 2.25.0)
+
+Solo quieres cambiar los cambios remotos
+El último escenario es un poco diferente a los anteriores. Digamos que estás en medio de una refactorización muy complicada, donde perder los cambios ni guardarlos es una opción. Sin embargo, aún deseas tener los cambios remotos disponibles para ejecutar git diff contra ellos.
+
+Como probablemente hayas descubierto, ¡descargar los cambios remotos no requiere git pull en absoluto! git fetch es suficiente. Una cosa a tener en cuenta es que, de forma predeterminada, git fetch solo traerá cambios del branch actual. Para obtener los cambios de todos los branches debes usar git fetch --all. Y si desea limpiar algunas de las ramas que ya no existen en el repositorio remoto, git fetch --prune hará la limpieza
